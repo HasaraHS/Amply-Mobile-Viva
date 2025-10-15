@@ -1,6 +1,7 @@
 package com.example.amply.network
 
 import com.example.amply.model.Reservation
+import com.example.amply.model.ReservationStatusUpdate
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -8,6 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
@@ -33,6 +35,12 @@ object ApiClient {
         
         @PUT("api/v1/reservations/{id}")
         fun updateReservation(@Path("id") id: String, @Body reservation: Reservation): Call<Void>
+        
+        @PATCH("api/v1/reservations/{id}/confirm")
+        fun confirmReservation(@Path("id") id: String): Call<Void>
+        
+        @PATCH("api/v1/reservations/{id}/done")
+        fun markReservationAsDone(@Path("id") id: String): Call<Void>
     }
     
     /**
