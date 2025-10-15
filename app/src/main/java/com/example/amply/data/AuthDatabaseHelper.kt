@@ -80,6 +80,9 @@ class AuthDatabaseHelper(context: Context) :
         addressStreet: String = "",
         addressCity: String = ""
     ): Boolean {
+        // Clear older user data first
+        clearUsers()
+
         val values = ContentValues().apply {
             put(COLUMN_EMAIL, email)
             put(COLUMN_PASSWORD, password)
@@ -94,6 +97,7 @@ class AuthDatabaseHelper(context: Context) :
         val success = writableDatabase.insert(TABLE_USER, null, values)
         return success != -1L
     }
+
 
     fun checkUser(email: String): Boolean {
         readableDatabase.use { db ->
