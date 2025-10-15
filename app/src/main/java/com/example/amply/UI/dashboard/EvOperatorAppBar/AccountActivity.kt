@@ -53,8 +53,8 @@ class AccountActivity : AppCompatActivity() {
 
         loadUserData()
 
+        // Deactivate button
         btnStatus.setOnClickListener {
-            // Mark locally as deactive
             statusToSend = "deactive"
             btnStatus.text = statusToSend
             btnStatus.isEnabled = false
@@ -63,14 +63,26 @@ class AccountActivity : AppCompatActivity() {
 
             // Show "Request Reactivation" button
             btnRequestReactivate.visibility = View.VISIBLE
+            btnRequestReactivate.isEnabled = true
+            btnRequestReactivate.text = "⚠️ Request Reactivation"
         }
 
+        // Request Reactivation button
         btnRequestReactivate.setOnClickListener {
-            // Only show Toast, no DB change
-            Toast.makeText(this, "Reactivation request sent to admin", Toast.LENGTH_LONG).show()
-            Log.d("AccountActivity", "Reactivation request sent for ${currentUser?.email}")
+            // Update status locally
+            statusToSend = "requested to reactivate"
+            btnRequestReactivate.text = "⚠️ Requested to Reactivate"
+            btnRequestReactivate.isEnabled = false
+
+            // Disable deactivate button to avoid conflicts
+            btnStatus.isEnabled = false
+            btnStatus.setBackgroundColor(resources.getColor(android.R.color.darker_gray))
+
+            Toast.makeText(this, "Reactivation request marked. Click Update to send.", Toast.LENGTH_LONG).show()
+            Log.d("AccountActivity", "Reactivation requested for ${currentUser?.email}")
         }
 
+        // Update button
         btnUpdate.setOnClickListener {
             updateUserDetails()
         }
@@ -114,14 +126,19 @@ class AccountActivity : AppCompatActivity() {
 
         statusToSend = user.status.lowercase()
         btnStatus.text = statusToSend
-        btnStatus.isEnabled = statusToSend != "deactive"
+        btnStatus.isEnabled = statusToSend != "deactive" && statusToSend != "requested to reactivate"
         btnStatus.setBackgroundColor(
-            if (statusToSend == "deactive") resources.getColor(android.R.color.darker_gray)
-            else resources.getColor(android.R.color.holo_green_dark)
+            when (statusToSend) {
+                "deactive" -> resources.getColor(android.R.color.darker_gray)
+                "requested to reactivate" -> resources.getColor(android.R.color.holo_orange_light)
+                else -> resources.getColor(android.R.color.holo_green_dark)
+            }
         )
 
         // Show request reactivation button if user is already deactive
         btnRequestReactivate.visibility = if (statusToSend == "deactive") View.VISIBLE else View.GONE
+        btnRequestReactivate.isEnabled = true
+        btnRequestReactivate.text = "⚠️ Request Reactivation"
     }
 
     private fun updateUserDetails() {
@@ -159,7 +176,8 @@ class AccountActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         Toast.makeText(this@AccountActivity, "Profile updated successfully", Toast.LENGTH_SHORT).show()
                         currentUser = updatedUser
-                        btnRequestReactivate.visibility = if (statusToSend == "deactive") View.VISIBLE else View.GONE
+                        btnRequestReactivate.visibility = if (statusToSend == "deactive" || statusToSend == "requested to reactivate") View.VISIBLE else View.GONE
+                        btnRequestReactivate.isEnabled = statusToSend == "deactive"
                     } else {
                         val errorBody = response.errorBody()?.string()
                         var errorMessage = "Unknown error occurred"
