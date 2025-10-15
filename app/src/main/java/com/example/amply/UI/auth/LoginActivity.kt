@@ -52,7 +52,7 @@ class LoginActivity : AppCompatActivity() {
 
         dbHelper = AuthDatabaseHelper(this)
 
-        val etEmail = findViewById<EditText>(R.id.username)
+        val etEmail = findViewById<EditText>(R.id.email)
         val etPassword = findViewById<EditText>(R.id.password)
         val btnLogin = findViewById<Button>(R.id.loginBtn)
 
