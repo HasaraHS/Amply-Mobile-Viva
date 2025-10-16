@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.amply.R
@@ -21,6 +22,13 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        val tvLogin = findViewById<TextView>(R.id.tvLogin)
+        tvLogin.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
         val etEmail = findViewById<EditText>(R.id.username)
         val etPassword = findViewById<EditText>(R.id.password)
         val etConfirmPassword = findViewById<EditText>(R.id.confirmPassword)
@@ -30,6 +38,7 @@ class RegisterActivity : AppCompatActivity() {
         val btnRegister = findViewById<Button>(R.id.registerBtn)
 
         val userProfileApi = RetrofitClient.instance.create(UserProfileApi::class.java)
+
 
         btnRegister.setOnClickListener {
             val email = etEmail.text.toString().trim()
