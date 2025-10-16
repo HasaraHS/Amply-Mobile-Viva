@@ -7,6 +7,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -17,6 +18,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.amply.R
 import com.example.amply.data.AuthDatabaseHelper
 import com.example.amply.data.ReservationDatabaseHelper
+import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.*
@@ -92,6 +94,11 @@ class CreateReservationActivity : AppCompatActivity() {
             insets
         }
 
+        // 🔁 Try syncing any offline reservations
+        if (isOnline(this)) {
+            syncPendingReservations()
+        }
+
         val tvNIC = findViewById<EditText>(R.id.tvNIC)
         val tvFullName = findViewById<EditText>(R.id.tvFullName)
         val tvVehicleNumber = findViewById<EditText>(R.id.tvVehicleNumber)
@@ -128,7 +135,7 @@ class CreateReservationActivity : AppCompatActivity() {
         }
 
         // -------------------- Fetch stations --------------------
-        fetchActiveStations(spinnerStation, tvStationId, tvSlotNo, tvStartTime, tvEndTime, tvReservationDate)
+        fetchStations(spinnerStation, tvStationId, tvSlotNo, tvStartTime, tvEndTime, tvReservationDate)
 
         // -------------------- Date Picker --------------------
         tvReservationDate.setOnClickListener {
@@ -192,7 +199,7 @@ class CreateReservationActivity : AppCompatActivity() {
         }
     }
 
-    // -------------------- Time Conversion Functions --------------------
+    // -------------------- Time Conversion --------------------
     private fun convertTo24Hour(timeStr: String): String {
         val parts = timeStr.split(" ")
         if (parts.size != 2) return "00:00:00"
@@ -219,8 +226,8 @@ class CreateReservationActivity : AppCompatActivity() {
         }
     }
 
-    // -------------------- Fetch Active Stations --------------------
-    private fun fetchActiveStations(
+    // -------------------- Fetch Stations --------------------
+    private fun fetchStations(
         spinner: Spinner,
         tvStationId: EditText,
         tvSlotNo: EditText,
@@ -228,52 +235,76 @@ class CreateReservationActivity : AppCompatActivity() {
         tvEndTime: EditText,
         tvReservationDate: EditText
     ) {
-        val api = getRetrofit().create(ChargingStationApi::class.java)
-        api.getActiveStations().enqueue(object : Callback<List<ChargingStation>> {
-            override fun onResponse(call: Call<List<ChargingStation>>, response: Response<List<ChargingStation>>) {
-                if (response.isSuccessful && response.body() != null) {
-                    stationList = response.body()!!
-                    val stationNames = mutableListOf("Select Station").apply { addAll(stationList.map { it.stationName }) }
-                    val adapter = object : ArrayAdapter<String>(this@CreateReservationActivity, R.layout.spinner_item, stationNames) {
-                        override fun isEnabled(position: Int) = position != 0
-                        override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-                            val view = super.getDropDownView(position, convertView, parent) as TextView
-                            view.setTextColor(resources.getColor(R.color.white))
-                            return view
-                        }
-                    }
-                    adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
-                    spinner.adapter = adapter
+        if (isOnline(this)) {
+            val api = getRetrofit().create(ChargingStationApi::class.java)
+            api.getActiveStations().enqueue(object : Callback<List<ChargingStation>> {
+                override fun onResponse(call: Call<List<ChargingStation>>, response: Response<List<ChargingStation>>) {
+                    if (response.isSuccessful && response.body() != null) {
+                        stationList = response.body()!!
+                        dbHelper.saveStations(stationList) // cache offline
+                        populateStationSpinner(spinner, tvStationId, tvSlotNo, tvStartTime, tvEndTime, tvReservationDate)
+                    } else loadStationsFromDb(spinner, tvStationId, tvSlotNo, tvStartTime, tvEndTime, tvReservationDate)
+                }
 
-                    // Set previous station if in update mode
-                    if (isUpdateMode) {
-                        val prevStationName = intent.getStringExtra("stationName")
-                        val index = stationNames.indexOf(prevStationName)
-                        if (index >= 0) {
-                            spinner.setSelection(index)
-                        }
-                    } else {
-                        spinner.setSelection(0)
-                    }
+                override fun onFailure(call: Call<List<ChargingStation>>, t: Throwable) {
+                    loadStationsFromDb(spinner, tvStationId, tvSlotNo, tvStartTime, tvEndTime, tvReservationDate)
+                }
+            })
+        } else {
+            loadStationsFromDb(spinner, tvStationId, tvSlotNo, tvStartTime, tvEndTime, tvReservationDate)
+        }
+    }
 
-                    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                        override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                            if (position != 0) {
-                                val selectedStation = stationList[position - 1]
-                                tvStationId.setText(selectedStation.stationId)
-                                val dateStr = tvReservationDate.text.toString()
-                                if (dateStr.isNotEmpty()) autoFillSlotAndTime(dateStr, spinner, tvSlotNo, tvStartTime, tvEndTime)
-                            } else tvStationId.setText("")
-                        }
-                        override fun onNothingSelected(parent: AdapterView<*>) {}
-                    }
-                } else Toast.makeText(this@CreateReservationActivity, "Failed to load stations", Toast.LENGTH_SHORT).show()
+    private fun loadStationsFromDb(
+        spinner: Spinner,
+        tvStationId: EditText,
+        tvSlotNo: EditText,
+        tvStartTime: EditText,
+        tvEndTime: EditText,
+        tvReservationDate: EditText
+    ) {
+        stationList = dbHelper.getStations()
+        if (stationList.isEmpty()) Toast.makeText(this, "No stations available offline", Toast.LENGTH_SHORT).show()
+        populateStationSpinner(spinner, tvStationId, tvSlotNo, tvStartTime, tvEndTime, tvReservationDate)
+    }
+
+    private fun populateStationSpinner(
+        spinner: Spinner,
+        tvStationId: EditText,
+        tvSlotNo: EditText,
+        tvStartTime: EditText,
+        tvEndTime: EditText,
+        tvReservationDate: EditText
+    ) {
+        val stationNames = mutableListOf("Select Station").apply { addAll(stationList.map { it.stationName }) }
+        val adapter = object : ArrayAdapter<String>(this, R.layout.spinner_item, stationNames) {
+            override fun isEnabled(position: Int) = position != 0
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getDropDownView(position, convertView, parent) as TextView
+                view.setTextColor(resources.getColor(R.color.white))
+                return view
             }
+        }
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        spinner.adapter = adapter
 
-            override fun onFailure(call: Call<List<ChargingStation>>, t: Throwable) {
-                Toast.makeText(this@CreateReservationActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+        if (isUpdateMode) {
+            val prevStationName = intent.getStringExtra("stationName")
+            val index = stationNames.indexOf(prevStationName)
+            if (index >= 0) spinner.setSelection(index)
+        } else spinner.setSelection(0)
+
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (position != 0) {
+                    val selectedStation = stationList[position - 1]
+                    tvStationId.setText(selectedStation.stationId)
+                    val dateStr = tvReservationDate.text.toString()
+                    if (dateStr.isNotEmpty()) autoFillSlotAndTime(dateStr, spinner, tvSlotNo, tvStartTime, tvEndTime)
+                } else tvStationId.setText("")
             }
-        })
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
     }
 
     // -------------------- Auto-fill Slot --------------------
@@ -304,7 +335,7 @@ class CreateReservationActivity : AppCompatActivity() {
         }
     }
 
-    // -------------------- Retrofit Helper --------------------
+    // -------------------- Retrofit & Network --------------------
     private fun getRetrofit(): Retrofit {
         val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         val client = OkHttpClient.Builder().addInterceptor(logging).build()
@@ -322,6 +353,7 @@ class CreateReservationActivity : AppCompatActivity() {
         return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
+    // -------------------- Offline Save --------------------
     private fun saveOffline(reservation: ReservationCreateRequest) {
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val now = sdf.format(Date())
@@ -343,6 +375,32 @@ class CreateReservationActivity : AppCompatActivity() {
             createdAt = now,
             updatedAt = now
         )
+
+        logAllReservations()
+        logAllStations()
+    }
+
+    private fun logAllReservations() {
+        val cursor = dbHelper.getAllReservations()
+        if (cursor.moveToFirst()) {
+            do {
+                val code = cursor.getString(cursor.getColumnIndexOrThrow("reservationCode"))
+                val name = cursor.getString(cursor.getColumnIndexOrThrow("fullName"))
+                val nic = cursor.getString(cursor.getColumnIndexOrThrow("nic"))
+                val station = cursor.getString(cursor.getColumnIndexOrThrow("stationName"))
+                val slot = cursor.getInt(cursor.getColumnIndexOrThrow("slotNo"))
+                val date = cursor.getString(cursor.getColumnIndexOrThrow("reservationDate"))
+                Log.d("DB_DEBUG", "Reservation: $code | $name | $nic | $station | Slot:$slot | Date:$date")
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+    }
+
+    private fun logAllStations() {
+        val stations = dbHelper.getStations()
+        stations.forEach {
+            Log.d("DB_DEBUG", "Station: ${it.stationId} | ${it.stationName} | Schedule: ${Gson().toJson(it.scheduleByDate)}")
+        }
     }
 
     // -------------------- API Calls --------------------
@@ -350,10 +408,9 @@ class CreateReservationActivity : AppCompatActivity() {
         val api = getRetrofit().create(ReservationApi::class.java)
         api.createReservation(reservation).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(this@CreateReservationActivity, "Reservation created successfully", Toast.LENGTH_SHORT).show()
-                    finish()
-                } else Toast.makeText(this@CreateReservationActivity, "API Error: ${response.code()}", Toast.LENGTH_SHORT).show()
+                if (response.isSuccessful) Toast.makeText(this@CreateReservationActivity, "Reservation created successfully", Toast.LENGTH_SHORT).show()
+                else Toast.makeText(this@CreateReservationActivity, "API Error: ${response.code()}", Toast.LENGTH_SHORT).show()
+                finish()
             }
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 saveOffline(reservation)
@@ -366,10 +423,9 @@ class CreateReservationActivity : AppCompatActivity() {
         val api = getRetrofit().create(ReservationApi::class.java)
         api.updateReservation(id, reservation).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(this@CreateReservationActivity, "Reservation updated successfully", Toast.LENGTH_SHORT).show()
-                    finish()
-                } else Toast.makeText(this@CreateReservationActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
+                if (response.isSuccessful) Toast.makeText(this@CreateReservationActivity, "Reservation updated successfully", Toast.LENGTH_SHORT).show()
+                else Toast.makeText(this@CreateReservationActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
+                finish()
             }
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 Toast.makeText(this@CreateReservationActivity, "Network error", Toast.LENGTH_SHORT).show()
@@ -414,5 +470,43 @@ class CreateReservationActivity : AppCompatActivity() {
             dialog.dismiss()
         }
         dialog.show()
+    }
+
+    // -------------------- Sync Pending Reservations --------------------
+    private fun syncPendingReservations() {
+        val pendingList = dbHelper.getPendingReservations()
+        if (pendingList.isEmpty()) {
+            Log.d("SYNC", "No pending reservations to sync")
+            return
+        }
+
+        if (!isOnline(this)) {
+            Log.d("SYNC", "Offline — skipping sync")
+            return
+        }
+
+        val api = getRetrofit().create(ReservationApi::class.java)
+
+        for (reservation in pendingList) {
+            api.createReservation(reservation).enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        dbHelper.markReservationAsSynced(reservation.NIC ?: "")
+                        Log.d("SYNC", "Synced reservation: ${reservation.NIC}")
+                    } else {
+                        Log.e("SYNC", "Failed to sync: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Log.e("SYNC", "Sync error: ${t.message}")
+                }
+            })
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (isOnline(this)) syncPendingReservations()
     }
 }
