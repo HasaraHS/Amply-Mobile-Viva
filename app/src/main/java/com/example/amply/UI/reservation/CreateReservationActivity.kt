@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import com.example.amply.data.AuthDatabaseHelper
 
 class CreateReservationActivity : AppCompatActivity() {
 
@@ -66,6 +67,7 @@ class CreateReservationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create_reservation)
 
         dbHelper = ReservationDatabaseHelper(this)
+        val authDbHelper = AuthDatabaseHelper(this)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.createReservation)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -83,6 +85,10 @@ class CreateReservationActivity : AppCompatActivity() {
         val tvStartTime = findViewById<EditText>(R.id.tvStartTime)
         val tvEndTime = findViewById<EditText>(R.id.tvEndTime)
         val btnSubmit = findViewById<Button>(R.id.btnSubmitReservation)
+
+        //load logged in User
+//        val loggedEmail = authDbHelper.getLoggedInUserEmail()
+//        val userProfile = loggedEmail?.let {authDbHelper.getUserProfile(it)}
 
         //check if update mode
         isUpdateMode = intent.getBooleanExtra("isUpdate", false)
