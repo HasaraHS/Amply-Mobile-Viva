@@ -87,8 +87,14 @@ class CreateReservationActivity : AppCompatActivity() {
         val btnSubmit = findViewById<Button>(R.id.btnSubmitReservation)
 
         //load logged in User
-//        val loggedEmail = authDbHelper.getLoggedInUserEmail()
-//        val userProfile = loggedEmail?.let {authDbHelper.getUserProfile(it)}
+        val loggedEmail = authDbHelper.getLoggedInUserEmail()
+        val userProfile = loggedEmail?.let {authDbHelper.getUserProfile(it)}
+        if (userProfile != null) {
+            tvFullName.setText(userProfile["fullName"] ?: "")
+            tvNIC.setText(userProfile["nic"] ?: "")
+            tvFullName.isEnabled = false
+            tvNIC.isEnabled = false
+        }
 
         //check if update mode
         isUpdateMode = intent.getBooleanExtra("isUpdate", false)
