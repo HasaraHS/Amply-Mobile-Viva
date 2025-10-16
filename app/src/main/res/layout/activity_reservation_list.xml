@@ -13,8 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_margin="16dp"
-        android:padding="16dp"
+        android:padding="5dp"
+        android:layout_margin="5dp"
         android:background="@drawable/white_container"
         android:elevation="6dp">
 
@@ -27,25 +27,33 @@
             android:gravity="center"
             android:layout_marginBottom="8dp">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnPending"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="Pending"
-                android:backgroundTint="@color/black"
-                android:textColor="@android:color/white" />
+                android:textColor="@color/white"
+                android:backgroundTint="@android:color/transparent"
+                app:cornerRadius="15dp"
+                app:strokeColor="@color/white"
+                app:strokeWidth="2dp"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnConfirmed"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="Confirmed"
-                android:backgroundTint="@color/gray"
-                android:textColor="@android:color/white"
-                android:layout_marginStart="8dp"/>
-        </LinearLayout>
+                android:textColor="@color/white"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="@android:color/transparent"
+                app:cornerRadius="15dp"
+                app:strokeColor="@color/white"
+                app:strokeWidth="2dp"/>
+        </LinearLayout> <!-- Close layoutFilter -->
 
         <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
@@ -55,7 +63,7 @@
             android:layout_weight="1"
             android:padding="12dp" />
 
-    </LinearLayout>
+    </LinearLayout> <!-- Close mainContainer -->
 
     <!-- Floating action button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
