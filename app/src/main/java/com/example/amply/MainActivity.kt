@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val users = response.body()
                     if (!users.isNullOrEmpty()) {
-                        dbHelper.clearUsers()
+                        dbHelper.clearCurrentUser()
                         users.forEach { user ->
                             dbHelper.addUser(user.email, user.password)
                         }

@@ -7,13 +7,25 @@
     android:background="@drawable/car"
     android:padding="32dp">
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:textColor="@android:color/white"
+        android:backgroundTint="#e74c3c"
+        app:cornerRadius="16dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp" />
+
     <!-- Welcome Section - Top -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="12dp"
         android:layout_marginBottom="24dp">
 
         <TextView
