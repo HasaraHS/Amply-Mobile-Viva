@@ -32,10 +32,15 @@ class LoginActivity : AppCompatActivity() {
         val email: String,
         val password: String,
         val role: String?,
-        val fullName: String
+        val fullName: String,
+        val nic: String?,
+        val phone: String?,
+        val address_no: String?,
+        val address_street: String?,
+        val address_city: String?
     )
 
-    // -------------------- Retrofit APIs --------------------
+    // -------------------- Retrofit API --------------------
     interface UserProfileApi {
         @GET("api/v1/userprofiles")
         fun getUserProfiles(): Call<List<UserProfile>>
@@ -47,9 +52,7 @@ class LoginActivity : AppCompatActivity() {
 
         dbHelper = AuthDatabaseHelper(this)
 
-        dbHelper.clearUsers()
-
-        val etEmail = findViewById<EditText>(R.id.username)
+        val etEmail = findViewById<EditText>(R.id.email)
         val etPassword = findViewById<EditText>(R.id.password)
         val btnLogin = findViewById<Button>(R.id.loginBtn)
 
@@ -62,12 +65,13 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // First check local cache
+            // First, try local database
             if (dbHelper.validateUser(email, password)) {
-                Toast.makeText(this, "Login successful (local)", Toast.LENGTH_SHORT).show()
-                navigateBasedOnRole(dbHelper.getUserRole(email))
+                Toast.makeText(this, "Login successful (offline)", Toast.LENGTH_SHORT).show()
+                val role = dbHelper.getUserRole(email)
+                navigateBasedOnRole(role)
             } else {
-                // Otherwise, authenticate via API
+                // Authenticate via API and save full profile
                 authenticateAndSaveUser(email, password)
             }
         }
@@ -83,7 +87,7 @@ class LoginActivity : AppCompatActivity() {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://conor-truculent-rurally.ngrok-free.dev/") // replace with your API base URL
+            .baseUrl("https://conor-truculent-rurally.ngrok-free.dev/") // replace with your API
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -103,9 +107,19 @@ class LoginActivity : AppCompatActivity() {
                     val matchedUser = users.find { it.email.equals(email, true) && it.password == password }
 
                     if (matchedUser != null) {
-                        // Save only email & password to SQLite
+                        // Save full profile to SQLite
                         if (!dbHelper.checkUser(email)) {
-                            dbHelper.addUser(email, password, matchedUser.role ?: "")
+                            dbHelper.addUser(
+                                email = matchedUser.email,
+                                password = matchedUser.password,
+                                role = matchedUser.role ?: "",
+                                fullName = matchedUser.fullName,
+                                nic = matchedUser.nic ?: "",
+                                phone = matchedUser.phone ?: "",
+                                addressNo = matchedUser.address_no ?: "",
+                                addressStreet = matchedUser.address_street ?: "",
+                                addressCity = matchedUser.address_city ?: ""
+                            )
                         }
 
                         Toast.makeText(this@LoginActivity, "Welcome ${matchedUser.fullName}", Toast.LENGTH_SHORT).show()
@@ -128,7 +142,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun navigateBasedOnRole(role: String?) {
         when (role) {
-            "EvOperator" -> startActivity(Intent(this, EvOperatorDashboard::class.java))
+            "ElectiveOperator" -> startActivity(Intent(this, EvOperatorDashboard::class.java))
             "EvOwner" -> startActivity(Intent(this, EvOwnerDashboard::class.java))
             else -> Toast.makeText(this, "Unknown role: $role", Toast.LENGTH_SHORT).show()
         }
