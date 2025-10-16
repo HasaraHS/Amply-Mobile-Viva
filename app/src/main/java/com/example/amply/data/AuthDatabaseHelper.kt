@@ -16,6 +16,12 @@ class AuthDatabaseHelper(context: Context) :
         private const val COLUMN_EMAIL = "email"
         private const val COLUMN_PASSWORD = "password"
         private const val COLUMN_ROLE = "role"
+        private const val COLUMN_FULL_NAME = "full_name"
+        private const val COLUMN_NIC = "nic"
+        private const val COLUMN_PHONE = "phone"
+        private const val COLUMN_ADDRESS_NO = "address_no"
+        private const val COLUMN_ADDRESS_STREET = "address_street"
+        private const val COLUMN_ADDRESS_CITY = "address_city"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -23,34 +29,79 @@ class AuthDatabaseHelper(context: Context) :
             CREATE TABLE $TABLE_USER (
                 $COLUMN_EMAIL TEXT PRIMARY KEY,
                 $COLUMN_PASSWORD TEXT,
-                $COLUMN_ROLE TEXT
+                $COLUMN_ROLE TEXT,
+                $COLUMN_FULL_NAME TEXT,
+                $COLUMN_NIC TEXT,
+                $COLUMN_PHONE TEXT,
+                $COLUMN_ADDRESS_NO TEXT,
+                $COLUMN_ADDRESS_STREET TEXT,
+                $COLUMN_ADDRESS_CITY TEXT
             )
         """.trimIndent()
         db?.execSQL(createTable)
     }
+
+    fun getLoggedInUserEmail(): String? {
+        readableDatabase.use { db ->
+            val cursor = db.query(
+                TABLE_USER,
+                arrayOf(COLUMN_EMAIL),
+                null, null, null, null, null
+            )
+            cursor.use {
+                return if (it.moveToFirst()) {
+                    val index = it.getColumnIndex(COLUMN_EMAIL)
+                    if (index != -1) it.getString(index) else null
+                } else {
+                    null
+                }
+            }
+        }
+    }
+
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_USER")
         onCreate(db)
     }
 
-    // Clear all users
-    fun clearUsers() {
-        writableDatabase.use { it.delete(TABLE_USER, null, null) }
+    fun clearCurrentUser() {
+        val db = writableDatabase
+        db.execSQL("DELETE FROM $TABLE_USER")
+        db.close()
     }
 
-    // Add a user (email + password + role)
-    fun addUser(email: String, password: String, role: String = ""): Boolean {
+
+    fun addUser(
+        email: String,
+        password: String,
+        role: String = "",
+        fullName: String = "",
+        nic: String = "",
+        phone: String = "",
+        addressNo: String = "",
+        addressStreet: String = "",
+        addressCity: String = ""
+    ): Boolean {
+        // Clear older user data first
+        clearCurrentUser()
+
         val values = ContentValues().apply {
             put(COLUMN_EMAIL, email)
             put(COLUMN_PASSWORD, password)
             put(COLUMN_ROLE, role)
+            put(COLUMN_FULL_NAME, fullName)
+            put(COLUMN_NIC, nic)
+            put(COLUMN_PHONE, phone)
+            put(COLUMN_ADDRESS_NO, addressNo)
+            put(COLUMN_ADDRESS_STREET, addressStreet)
+            put(COLUMN_ADDRESS_CITY, addressCity)
         }
         val success = writableDatabase.insert(TABLE_USER, null, values)
         return success != -1L
     }
 
-    // Check if user exists
+
     fun checkUser(email: String): Boolean {
         readableDatabase.use { db ->
             db.rawQuery("SELECT * FROM $TABLE_USER WHERE $COLUMN_EMAIL=?", arrayOf(email)).use { cursor ->
@@ -59,7 +110,6 @@ class AuthDatabaseHelper(context: Context) :
         }
     }
 
-    // Validate user credentials
     fun validateUser(email: String, password: String): Boolean {
         readableDatabase.use { db ->
             db.rawQuery(
@@ -71,56 +121,30 @@ class AuthDatabaseHelper(context: Context) :
         }
     }
 
-    // Get role of a user
     fun getUserRole(email: String): String {
         readableDatabase.use { db ->
-            db.rawQuery(
-                "SELECT $COLUMN_ROLE FROM $TABLE_USER WHERE $COLUMN_EMAIL=?",
-                arrayOf(email)
-            ).use { cursor ->
+            db.rawQuery("SELECT $COLUMN_ROLE FROM $TABLE_USER WHERE $COLUMN_EMAIL=?", arrayOf(email)).use { cursor ->
                 return if (cursor.moveToFirst()) cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ROLE)) else ""
             }
         }
     }
 
-    // Get password of a user by email
-    fun getUserPassword(email: String): String {
+    fun getUserProfile(email: String): Map<String, String>? {
         readableDatabase.use { db ->
-            db.rawQuery(
-                "SELECT $COLUMN_PASSWORD FROM $TABLE_USER WHERE $COLUMN_EMAIL=?",
-                arrayOf(email)
-            ).use { cursor ->
-                return if (cursor.moveToFirst()) cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD)) else ""
-            }
-        }
-    }
-
-    fun getAllUsers(): List<Pair<String, String>> {
-        val users = mutableListOf<Pair<String, String>>()
-        readableDatabase.use { db ->
-            db.rawQuery("SELECT $COLUMN_EMAIL, $COLUMN_PASSWORD FROM $TABLE_USER", null).use { cursor ->
-                while (cursor.moveToNext()) {
-                    val email = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL))
-                    val password = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD))
-                    users.add(email to password)
-                }
-            }
-        }
-        return users
-    }
-
-
-
-    // Delete a user
-    fun deleteUser(email: String) {
-        writableDatabase.use { it.delete(TABLE_USER, "$COLUMN_EMAIL=?", arrayOf(email)) }
-    }
-
-    // Get logged-in user email (first row in table)
-    fun getLoggedInUserEmail(): String? {
-        readableDatabase.use { db ->
-            db.query(TABLE_USER, arrayOf(COLUMN_EMAIL), null, null, null, null, null).use { cursor ->
-                return if (cursor.moveToFirst()) cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)) else null
+            db.rawQuery("SELECT * FROM $TABLE_USER WHERE $COLUMN_EMAIL=?", arrayOf(email)).use { cursor ->
+                return if (cursor.moveToFirst()) {
+                    mapOf(
+                        "email" to cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
+                        "password" to cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PASSWORD)),
+                        "role" to cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ROLE)),
+                        "fullName" to cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FULL_NAME)),
+                        "nic" to cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NIC)),
+                        "phone" to cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE)),
+                        "addressNo" to cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ADDRESS_NO)),
+                        "addressStreet" to cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ADDRESS_STREET)),
+                        "addressCity" to cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_ADDRESS_CITY))
+                    )
+                } else null
             }
         }
     }
