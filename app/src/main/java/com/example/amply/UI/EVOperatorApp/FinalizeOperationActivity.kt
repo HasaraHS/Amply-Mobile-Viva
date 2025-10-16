@@ -212,8 +212,8 @@ class FinalizeOperationActivity : AppCompatActivity() {
         btnFinalizeOperation.isEnabled = false
         btnFinalizeOperation.text = "Finalizing..."
 
-        // Update reservation status to "Completed"
-        updateReservationStatus(reservation.id ?: "", "Completed")
+        // Update reservation status to "Done"
+        updateReservationStatus(reservation.id ?: "", "Done")
     }
 
     /**
@@ -223,13 +223,29 @@ class FinalizeOperationActivity : AppCompatActivity() {
      */
     private fun updateReservationStatus(reservationId: String, status: String) {
         val apiService = ApiClient.reservationApiService
-        val statusUpdate = ReservationStatusUpdate(status)
         
-        // Create updated reservation object
-        val updatedReservation = currentReservation?.copy(status = status)
+        // Create updated reservation object with all required fields
+        val updatedReservation = currentReservation?.copy(status = "Done")
         
         if (updatedReservation != null) {
-            apiService.updateReservation(reservationId, updatedReservation).enqueue(object : Callback<Void> {
+            // Debug logging
+            println("🔧 Updating reservation status:")
+            println("   Reservation ID: '$reservationId'")
+            println("   Status: 'Done'")
+            println("   Reservation Code: '${updatedReservation.reservationCode}'")
+            println("   Full Name: '${updatedReservation.fullName}'")
+            println("   Station ID: '${updatedReservation.stationId}'")
+            println("   Complete Reservation: ${updatedReservation}")
+            
+            // Check if reservation ID is valid
+            if (reservationId.isBlank()) {
+                Toast.makeText(this, "Invalid reservation ID", Toast.LENGTH_SHORT).show()
+                resetFinalizeButton()
+                return
+            }
+            
+            // Use the dedicated /done endpoint
+            apiService.markReservationAsDone(reservationId).enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (response.isSuccessful) {
                         // Save to local database
@@ -238,9 +254,11 @@ class FinalizeOperationActivity : AppCompatActivity() {
                         // Success - show confirmation
                         Toast.makeText(
                             this@FinalizeOperationActivity,
-                            "Operation Finalized Successfully!",
+                            "Operation Finalized! Moved to Done section.",
                             Toast.LENGTH_LONG
                         ).show()
+                        
+                        println("✅ Reservation marked as Done in MongoDB: ${updatedReservation.reservationCode}")
                         
                         // Navigate back or finish
                         finish()
@@ -257,6 +275,7 @@ class FinalizeOperationActivity : AppCompatActivity() {
                         ).show()
                         
                         println("API Error ${response.code()}: $errorBody")
+                        println("Request URL: ${call.request().url}")
                         
                         // Still finish since we saved locally
                         finish()
@@ -293,7 +312,7 @@ class FinalizeOperationActivity : AppCompatActivity() {
 
     /**
      * Save completed reservation to local database
-     * @param reservation The reservation with "Completed" status
+     * @param reservation The reservation with "Done" status
      */
     private fun saveToLocalDatabase(reservation: Reservation) {
         try {
@@ -311,7 +330,7 @@ class FinalizeOperationActivity : AppCompatActivity() {
                 reservationDate = reservation.reservationDate,
                 startTime = reservation.startTime,
                 endTime = reservation.endTime,
-                status = "Completed",
+                status = "Done",
                 qrCode = reservation.qrCode,
                 createdAt = currentDateTime,
                 updatedAt = currentDateTime
@@ -332,7 +351,7 @@ class FinalizeOperationActivity : AppCompatActivity() {
                     reservationDate = reservation.reservationDate,
                     startTime = reservation.startTime,
                     endTime = reservation.endTime,
-                    status = "Completed",
+                    status = "Done",
                     updatedAt = currentDateTime
                 )
                 
