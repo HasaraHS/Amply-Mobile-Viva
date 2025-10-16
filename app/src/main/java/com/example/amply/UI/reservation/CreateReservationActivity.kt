@@ -113,9 +113,6 @@ class CreateReservationActivity : AppCompatActivity() {
             tvNIC.isEnabled = false
         }
 
-        // -------------------- Fetch stations --------------------
-        fetchActiveStations(spinnerStation, tvStationId, tvSlotNo, tvStartTime, tvEndTime, tvReservationDate)
-
         // -------------------- Update mode --------------------
         isUpdateMode = intent.getBooleanExtra("isUpdate", false)
         if (isUpdateMode) {
@@ -123,13 +120,15 @@ class CreateReservationActivity : AppCompatActivity() {
             tvNIC.setText(intent.getStringExtra("nic"))
             tvFullName.setText(intent.getStringExtra("fullName"))
             tvVehicleNumber.setText(intent.getStringExtra("vehicleNumber"))
-            tvStationId.setText(intent.getStringExtra("stationId"))
             tvSlotNo.setText(intent.getIntExtra("slotNo", 0).toString())
             tvReservationDate.setText(intent.getStringExtra("reservationDate"))
             tvStartTime.setText(formatTo12Hour(intent.getStringExtra("startTime") ?: "00:00:00"))
             tvEndTime.setText(formatTo12Hour(intent.getStringExtra("endTime") ?: "00:00:00"))
             btnSubmit.text = "Update Reservation"
         }
+
+        // -------------------- Fetch stations --------------------
+        fetchActiveStations(spinnerStation, tvStationId, tvSlotNo, tvStartTime, tvEndTime, tvReservationDate)
 
         // -------------------- Date Picker --------------------
         tvReservationDate.setOnClickListener {
@@ -245,7 +244,17 @@ class CreateReservationActivity : AppCompatActivity() {
                     }
                     adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
                     spinner.adapter = adapter
-                    spinner.setSelection(0)
+
+                    // Set previous station if in update mode
+                    if (isUpdateMode) {
+                        val prevStationName = intent.getStringExtra("stationName")
+                        val index = stationNames.indexOf(prevStationName)
+                        if (index >= 0) {
+                            spinner.setSelection(index)
+                        }
+                    } else {
+                        spinner.setSelection(0)
+                    }
 
                     spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                         override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
