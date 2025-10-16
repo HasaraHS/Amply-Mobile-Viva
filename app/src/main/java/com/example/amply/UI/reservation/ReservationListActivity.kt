@@ -55,9 +55,9 @@ class ReservationListActivity : AppCompatActivity() {
         }
     }
 
-    // -----------------------------
+
     // Data classes
-    // -----------------------------
+
     data class ReservationExtended(
         val id: String,
         val reservationCode: String,
@@ -104,9 +104,8 @@ class ReservationListActivity : AppCompatActivity() {
         fun deleteReservation(@Path("id") id: String): Call<Void>
     }
 
-    // -----------------------------
+
     // onCreate()
-    // -----------------------------
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -121,7 +120,7 @@ class ReservationListActivity : AppCompatActivity() {
         dbHelper = ReservationDatabaseHelper(this)
         authDbHelper = AuthDatabaseHelper(this)
 
-        // ✅ Get logged user's NIC
+        // Get logged user's NIC
         val loggedEmail = authDbHelper.getLoggedInUserEmail()
         val profile = loggedEmail?.let { authDbHelper.getUserProfile(it) }
         loggedUserNic = profile?.get("nic")
@@ -171,9 +170,8 @@ class ReservationListActivity : AppCompatActivity() {
         fetchReservationsFromApi()
     }
 
-    // -----------------------------
+
     // Auto-refresh start/stop
-    // -----------------------------
     override fun onResume() {
         super.onResume()
         fetchReservationsFromApi()
@@ -185,9 +183,9 @@ class ReservationListActivity : AppCompatActivity() {
         handler.removeCallbacks(refreshRunnable) // Stop auto-refresh
     }
 
-    // -----------------------------
+
     // API Fetch (filtered by NIC)
-    // -----------------------------
+
     private fun fetchReservationsFromApi() {
         val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         val client = OkHttpClient.Builder().addInterceptor(logging).build()
@@ -248,9 +246,9 @@ class ReservationListActivity : AppCompatActivity() {
         })
     }
 
-    // -----------------------------
+
     // Filtering + Local Sync
-    // -----------------------------
+
     private fun filterReservations(status: String) {
         val filtered = allReservations.filter { it.status.equals(status, ignoreCase = true) }
         adapter.updateData(filtered)
@@ -279,9 +277,9 @@ class ReservationListActivity : AppCompatActivity() {
         }
     }
 
-    // -----------------------------
+   
     // Update / Delete
-    // -----------------------------
+
     private fun updateReservation(reservation: ReservationExtended) {
         try {
             val rawDateTime = "${reservation.reservationDate} ${reservation.startTime}"
