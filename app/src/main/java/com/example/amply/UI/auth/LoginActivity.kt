@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
+import android.widget.TextView
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -56,6 +57,12 @@ class LoginActivity : AppCompatActivity() {
         val etPassword = findViewById<EditText>(R.id.password)
         val btnLogin = findViewById<Button>(R.id.loginBtn)
 
+        val tvRegister = findViewById<TextView>(R.id.tvRegister)
+        tvRegister.setOnClickListener {
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
+        }
+
         btnLogin.setOnClickListener {
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
@@ -76,6 +83,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun authenticateAndSaveUser(email: String, password: String) {
         val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
