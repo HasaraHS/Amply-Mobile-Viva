@@ -24,6 +24,8 @@ class ReservationViewAdapter(
         val reservationDate: TextView = itemView.findViewById(R.id.reservationDate)
         val reservationTime: TextView = itemView.findViewById(R.id.reservationTime)
         val statusBadge: TextView = itemView.findViewById(R.id.statusBadge)
+        val slotNumber: TextView = itemView.findViewById(R.id.slotNumber)
+        val vehicleNumber: TextView = itemView.findViewById(R.id.vehicleNumber)
         val btnUpdate: Button = itemView.findViewById(R.id.btnUpdate)
         val btnDelete : Button = itemView.findViewById(R.id.btnDelete)
 
@@ -45,9 +47,11 @@ class ReservationViewAdapter(
         val reservation = reservations[position]
         holder.reservationId.text = "ID: ${reservation.reservationCode}"
         holder.stationName.text = reservation.stationName
-        holder.reservationDate.text = reservation.reservationDate
-        holder.reservationTime.text = reservation.startTime
+        holder.reservationDate.text = reservation.reservationDate.split("T")[0]
+        holder.reservationTime.text = "${reservation.startTime} - ${reservation.endTime}"
         holder.statusBadge.text = reservation.status.uppercase()
+        holder.slotNumber.text = "Slot ${reservation.slotNo}"
+        holder.vehicleNumber.text = reservation.vehicleNumber
 
         // Set click listener
         holder.itemView.setOnClickListener {

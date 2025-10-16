@@ -23,7 +23,6 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp">
 
-            <!-- Circular Icon -->
             <FrameLayout
                 android:id="@+id/iconContainer"
                 android:layout_width="80dp"
@@ -37,10 +36,9 @@
                     android:layout_height="48dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_zap_foreground"
-                    android:contentDescription="App Icon"/>
+                    android:contentDescription="App Icon" />
             </FrameLayout>
 
-            <!-- App Name -->
             <TextView
                 android:id="@+id/app_name"
                 android:layout_width="wrap_content"
@@ -48,7 +46,7 @@
                 android:text="Amply"
                 android:textSize="32sp"
                 android:textStyle="bold"
-                android:textColor="#2c3e50"/>
+                android:textColor="#2c3e50" />
         </LinearLayout>
 
         <!-- Full Name Field -->
@@ -69,7 +67,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:inputType="textPersonName"/>
+                android:inputType="textPersonName"
+                android:textColor="@color/gray_800" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- NIC Field -->
@@ -90,7 +89,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:inputType="text"/>
+                android:inputType="text"
+                android:textColor="@color/gray_800" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Email Field -->
@@ -111,7 +111,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:inputType="textEmailAddress"/>
+                android:inputType="textEmailAddress"
+                android:textColor="@color/gray_800" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Phone Field -->
@@ -132,7 +133,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:inputType="phone"/>
+                android:inputType="phone"
+                android:textColor="@color/gray_800" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Password Field -->
@@ -153,7 +155,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:inputType="textPassword"/>
+                android:inputType="textPassword"
+                android:textColor="@color/gray_800" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Confirm Password Field -->
@@ -174,7 +177,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:inputType="textPassword"/>
+                android:inputType="textPassword"
+                android:textColor="@color/gray_800" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Register Button -->
@@ -186,7 +190,7 @@
             android:textSize="18sp"
             android:textColor="@android:color/white"
             android:backgroundTint="#1f2937"
-            app:cornerRadius="16dp"/>
+            app:cornerRadius="16dp" />
 
         <TextView
             android:id="@+id/tvLogin"

@@ -120,20 +120,16 @@
                         android:textStyle="bold"
                         android:layout_marginBottom="12dp" />
 
-                    <EditText
-                        android:id="@+id/tvStationName"
+                    <!-- Spinner for Station Names -->
+                    <Spinner
+                        android:id="@+id/spinnerStation"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:hint="Station Name"
-                        android:textColorHint="@color/gray_500"
-                        android:drawableStart="@drawable/outline_add_home_work_24"
-                        android:drawablePadding="10dp"
                         android:background="@drawable/bg_input_rounded"
                         android:paddingHorizontal="14dp"
-                        android:textColor="#000"
-                        android:textSize="15sp"
-                        android:layout_marginBottom="12dp" />
+                        android:layout_marginBottom="12dp"/>
 
+                    <!-- Auto-filled Station ID -->
                     <EditText
                         android:id="@+id/tvStationId"
                         android:layout_width="match_parent"
@@ -144,6 +140,7 @@
                         android:drawablePadding="10dp"
                         android:background="@drawable/bg_input_rounded"
                         android:paddingHorizontal="14dp"
+                        android:enabled="false"
                         android:textColor="#000"
                         android:textSize="15sp"
                         android:layout_marginBottom="20dp" />

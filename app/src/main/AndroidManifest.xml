@@ -46,6 +46,12 @@
         <!-- Reservation Activities -->
         <activity android:name=".ui.reservation.ReservationListActivity" android:exported="true" />
         <activity
+            android:name=".ui.reservation.CreateReservationActivity"
+            android:exported="false"
+            android:label="Create Reservation"
+            android:theme="@style/Theme.Amply" />
+
+        <activity
             android:name=".ui.reservation.MyReservationsActivity"
             android:exported="false"
             android:theme="@style/Theme.Amply" />

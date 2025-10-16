@@ -8,12 +8,12 @@
     <item
         android:id="@+id/nav_activity"
         android:icon="@drawable/ic_activity"
-        android:title="Reservation" />
+        android:title="History" />
 
     <item
         android:id="@+id/nav_saved"
         android:icon="@drawable/ic_bookmark"
-        android:title="Saved" />
+        android:title="Reservation" />
 
     <item
         android:id="@+id/nav_account"

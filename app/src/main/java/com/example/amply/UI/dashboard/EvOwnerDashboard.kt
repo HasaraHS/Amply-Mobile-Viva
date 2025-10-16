@@ -17,6 +17,7 @@ import com.example.amply.model.ChargingStation
 import com.example.amply.ui.auth.LoginActivity
 import com.example.amply.ui.dashboard.EvOperatorAppBar.AccountActivity
 import com.example.amply.ui.reservation.MyReservationsActivity
+import com.example.amply.ui.reservation.ReservationListActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -184,7 +185,12 @@ class EvOwnerDashboard : AppCompatActivity(), OnMapReadyCallback {
                     startActivity(intent)
                     true
                 }
-                R.id.nav_saved -> { Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show(); true }
+                R.id.nav_saved -> {
+                    val intent = Intent(this, ReservationListActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+
                 R.id.nav_account -> {
                     // Launch AccountActivity
                     startActivity(Intent(this, AccountActivity::class.java))

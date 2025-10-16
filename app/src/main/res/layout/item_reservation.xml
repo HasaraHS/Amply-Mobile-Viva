@@ -4,142 +4,272 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp"
-    android:background="@color/gray_200">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    android:backgroundTint="#1A1A1A">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@color/gray_200">
+        android:padding="20dp">
 
+        <!-- Header: Station Name & Status -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:background="@color/gray_200">
+            android:layout_marginBottom="12dp">
 
-            <!-- Station Icon -->
-            <View
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="@drawable/circle_background"
-                android:backgroundTint="#F3F4F6" />
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/stationName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="12dp">
+                android:text="PowerHub Colombo"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.01" />
 
-                <!-- Changed ID from tvStationName to stationName to match adapter -->
-                <TextView
-                    android:id="@+id/stationName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="PowerHub Colombo"
-                    android:textSize="16sp"
-                    android:textColor="#111827"
-                    android:textStyle="bold"
-                    android:fontFamily="sans-serif-medium" />
-
-                <!-- Split into separate date and time TextViews to match adapter -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="4dp">
-
-                    <TextView
-                        android:id="@+id/reservationDate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2025-01-15"
-                        android:textSize="14sp"
-                        android:textColor="#6B7280" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=" at "
-                        android:textSize="14sp"
-                        android:textColor="#6B7280" />
-
-                    <TextView
-                        android:id="@+id/reservationTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="10:00 AM"
-                        android:textSize="14sp"
-                        android:textColor="#6B7280" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Changed ID from tvStatus to statusBadge to match adapter -->
             <TextView
                 android:id="@+id/statusBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="PENDING"
-                android:textSize="12sp"
+                android:textColor="#000000"
+                android:textSize="11sp"
                 android:textStyle="bold"
-                android:textColor="#F59E0B"
-                android:background="@drawable/status_background"
+                android:background="@drawable/status_badge_pending"
                 android:paddingHorizontal="12dp"
-                android:paddingVertical="6dp" />
+                android:paddingVertical="6dp"
+                android:letterSpacing="0.05" />
         </LinearLayout>
 
-        <View
+        <!-- Reservation ID -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/stay_gray"
-            android:layout_marginVertical="12dp" />
-
-        <TextView
-            android:id="@+id/tvReservationId"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ID: #12345"
-            android:textSize="12sp"
-            android:textColor="@color/blue_gray" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎫"
+                android:textSize="16sp"
+                android:layout_marginEnd="8dp" />
 
+            <TextView
+                android:id="@+id/tvReservationId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ID: #12345"
+                android:textColor="#E5E7EB"
+                android:textSize="14sp"
+                android:fontFamily="monospace" />
+        </LinearLayout>
+
+        <!-- Date and Time Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <!-- Date -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📅"
+                    android:textSize="16sp"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/reservationDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2025-01-15"
+                    android:textColor="#9CA3AF"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- Time -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⏰"
+                    android:textSize="16sp"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/reservationTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10:00 - 12:00"
+                    android:textColor="#9CA3AF"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Slot and Vehicle Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- Slot -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🔌"
+                    android:textSize="16sp"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/slotNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Slot 5"
+                    android:textColor="#9CA3AF"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- Vehicle -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🚗"
+                    android:textSize="16sp"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/vehicleNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ABC-1234"
+                    android:textColor="#9CA3AF"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- QR Code Section -->
+        <LinearLayout
+            android:id="@+id/qrCodeContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:padding="12dp"
+            android:background="@drawable/qr_code_background"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scan QR Code"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <ImageView
+                android:id="@+id/ivQrCode"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:scaleType="fitCenter"
+                android:contentDescription="QR Code for reservation"
+                android:background="#FFFFFF"
+                android:padding="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tap to enlarge"
+                android:textColor="#9CA3AF"
+                android:textSize="10sp"
+                android:layout_marginTop="6dp" />
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <!-- Action Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="end"
-            android:layout_marginTop="8dp"
-            android:weightSum="2">
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp">
 
-            <Button
+            <!-- Update Button -->
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnUpdate"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Update"
-                android:backgroundTint="@color/blue_500"
-                android:textColor="@android:color/white" />
+                android:textColor="#E5E7EB"
+                android:backgroundTint="#2E2E2E"
+                android:insetTop="6dp"
+                android:insetBottom="6dp"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="8dp"
+                app:icon="@drawable/ic_edit"
+                app:iconPadding="8dp"
+                app:iconTint="#E5E7EB"
+                app:iconGravity="textStart"
+                android:layout_marginEnd="12dp" />
 
-            <Button
+            <!-- Delete Button -->
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDelete"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Delete"
-                android:backgroundTint="@color/red_500"
-                android:textColor="@android:color/white"
-                android:layout_marginStart="8dp" />
-
-
-
-
+                android:textColor="#E5E7EB"
+                android:backgroundTint="#3A3A3A"
+                android:insetTop="6dp"
+                android:insetBottom="6dp"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="8dp"
+                app:icon="@drawable/ic_delete"
+                app:iconPadding="8dp"
+                app:iconTint="#E5E7EB"
+                app:iconGravity="textStart" />
         </LinearLayout>
 
-    </LinearLayout>
 
+    </LinearLayout>
 </androidx.cardview.widget.CardView>
