@@ -5,7 +5,10 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.amply.R
+import com.example.amply.data.AuthDatabaseHelper
 import com.example.amply.ui.EVOperatorApp.QRScannerActivity
+import com.example.amply.ui.auth.LoginActivity
+import com.google.android.material.button.MaterialButton
 
 class EvOperatorDashboard : AppCompatActivity() {
 
@@ -14,6 +17,19 @@ class EvOperatorDashboard : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ev_operator_dashboard)
+
+        val btnLogout = findViewById<MaterialButton>(R.id.btnLogout)
+        btnLogout.setOnClickListener {
+            // Clear local SQLite user data (optional)
+            val dbHelper = AuthDatabaseHelper(this)
+            dbHelper.clearCurrentUser() // implement this in your helper
+
+            // Navigate back to LoginActivity
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        }
 
         initializeViews()
         setupClickListeners()

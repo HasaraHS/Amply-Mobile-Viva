@@ -65,9 +65,12 @@ class AuthDatabaseHelper(context: Context) :
         onCreate(db)
     }
 
-    fun clearUsers() {
-        writableDatabase.use { it.delete(TABLE_USER, null, null) }
+    fun clearCurrentUser() {
+        val db = writableDatabase
+        db.execSQL("DELETE FROM $TABLE_USER")
+        db.close()
     }
+
 
     fun addUser(
         email: String,
@@ -81,7 +84,7 @@ class AuthDatabaseHelper(context: Context) :
         addressCity: String = ""
     ): Boolean {
         // Clear older user data first
-        clearUsers()
+        clearCurrentUser()
 
         val values = ContentValues().apply {
             put(COLUMN_EMAIL, email)
