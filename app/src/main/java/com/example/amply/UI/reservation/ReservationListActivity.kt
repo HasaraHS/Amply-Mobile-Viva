@@ -277,7 +277,7 @@ class ReservationListActivity : AppCompatActivity() {
         }
     }
 
-   
+
     // Update / Delete
 
     private fun updateReservation(reservation: ReservationExtended) {

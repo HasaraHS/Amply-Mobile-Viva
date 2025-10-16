@@ -56,6 +56,7 @@
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
         app:boxCornerRadiusBottomEnd="12dp"
+        app:hintTextColor="@color/gray_800"
         app:layout_constraintTop_toBottomOf="@id/app_name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -67,6 +68,8 @@
             android:inputType="textEmailAddress"
             android:drawableStart="@drawable/baseline_email_24"
             android:drawablePadding="10dp"
+            android:textColor="@color/gray_800"
+            android:textColorHint="@color/gray_800"
             android:padding="16dp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -84,6 +87,7 @@
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
         app:boxCornerRadiusBottomEnd="12dp"
+        app:hintTextColor="@color/gray_800"
         app:layout_constraintTop_toBottomOf="@id/emailLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -95,6 +99,8 @@
             android:inputType="textPassword"
             android:drawableStart="@drawable/baseline_lock_24"
             android:drawablePadding="10dp"
+            android:textColor="@color/gray_800"
+            android:textColorHint="@color/gray_800"
             android:padding="16dp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -115,6 +121,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Register Text -->
     <TextView
         android:id="@+id/tvRegister"
         android:layout_width="wrap_content"
@@ -128,6 +135,5 @@
         app:layout_constraintTop_toBottomOf="@id/loginBtn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

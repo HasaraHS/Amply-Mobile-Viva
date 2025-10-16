@@ -86,7 +86,8 @@
                     android:inputType="textPersonName"
                     android:drawableStart="@drawable/ic_person"
                     android:drawablePadding="10dp"
-                    android:padding="16dp"/>
+                    android:padding="16dp"
+                    android:textColor="@color/gray_800" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Email -->
@@ -109,7 +110,8 @@
                     android:inputType="textEmailAddress"
                     android:drawableStart="@drawable/baseline_email_24"
                     android:drawablePadding="10dp"
-                    android:padding="16dp"/>
+                    android:padding="16dp"
+                    android:textColor="@color/gray_800" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Password -->
@@ -132,7 +134,8 @@
                     android:inputType="textPassword"
                     android:drawableStart="@drawable/baseline_lock_24"
                     android:drawablePadding="10dp"
-                    android:padding="16dp"/>
+                    android:padding="16dp"
+                    android:textColor="@color/gray_800" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- NIC -->
@@ -155,7 +158,8 @@
                     android:inputType="text"
                     android:drawableStart="@drawable/baseline_credit_card_24"
                     android:drawablePadding="10dp"
-                    android:padding="16dp"/>
+                    android:padding="16dp"
+                    android:textColor="@color/gray_800" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Phone -->
@@ -178,7 +182,8 @@
                     android:inputType="phone"
                     android:drawableStart="@drawable/outline_add_call_24"
                     android:drawablePadding="10dp"
-                    android:padding="16dp"/>
+                    android:padding="16dp"
+                    android:textColor="@color/gray_800" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Update Button -->
