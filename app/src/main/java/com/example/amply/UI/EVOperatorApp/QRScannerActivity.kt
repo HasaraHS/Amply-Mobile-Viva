@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.amply.BuildConfig
 import com.example.amply.R
 import com.example.amply.model.Reservation
 import com.journeyapps.barcodescanner.BarcodeCallback
@@ -327,7 +328,7 @@ class QRScannerActivity : AppCompatActivity() {
         val client = OkHttpClient.Builder().addInterceptor(logging).build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://conor-truculent-rurally.ngrok-free.dev/")
+            .baseUrl(BuildConfig.BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -390,7 +391,7 @@ class QRScannerActivity : AppCompatActivity() {
         val client = OkHttpClient.Builder().addInterceptor(logging).build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://conor-truculent-rurally.ngrok-free.dev/")
+            .baseUrl(BuildConfig.BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -469,7 +470,7 @@ class QRScannerActivity : AppCompatActivity() {
         val client = OkHttpClient.Builder().addInterceptor(logging).build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://conor-truculent-rurally.ngrok-free.dev/")
+            .baseUrl(BuildConfig.BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

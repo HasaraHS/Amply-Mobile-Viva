@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         val client = OkHttpClient.Builder().addInterceptor(logging).build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://conor-truculent-rurally.ngrok-free.dev/")
+            .baseUrl(BuildConfig.BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

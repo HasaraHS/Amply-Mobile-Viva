@@ -18,6 +18,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import android.widget.TextView
+import com.example.amply.BuildConfig
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -95,10 +96,11 @@ class LoginActivity : AppCompatActivity() {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://conor-truculent-rurally.ngrok-free.dev/") // replace with your API
+            .baseUrl(BuildConfig.BASE_URL) // replace with your API
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+
 
         val userApi = retrofit.create(UserProfileApi::class.java)
 

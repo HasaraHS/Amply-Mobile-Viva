@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.amply.BuildConfig
 import com.example.amply.R
 import com.example.amply.data.AuthDatabaseHelper
 import com.google.android.material.button.MaterialButton
@@ -45,7 +46,7 @@ class EvOwnerDashboard : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var dbHelper: UserProfileDatabaseHelper
     private lateinit var bottomNavigation: BottomNavigationView
 
-    private val apiUrl = "https://conor-truculent-rurally.ngrok-free.dev/api/v1/charging-stations"
+    private val apiUrl = "${BuildConfig.BASE_URL}api/v1/charging-stations"
 
     data class LocationData(
         @SerializedName("address") val address: String,

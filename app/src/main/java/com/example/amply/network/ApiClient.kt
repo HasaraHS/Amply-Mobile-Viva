@@ -1,5 +1,6 @@
 package com.example.amply.network
 
+import com.example.amply.BuildConfig
 import com.example.amply.model.Reservation
 import com.example.amply.model.ReservationStatusUpdate
 import okhttp3.OkHttpClient
@@ -21,7 +22,7 @@ import retrofit2.http.Path
 object ApiClient {
     
     // Base URL - same as used in MainActivity.kt
-    private const val BASE_URL = "https://conor-truculent-rurally.ngrok-free.dev/"
+    private const val BASE_URL = BuildConfig.BASE_URL
     
     /**
      * Retrofit API Interface for Reservation operations

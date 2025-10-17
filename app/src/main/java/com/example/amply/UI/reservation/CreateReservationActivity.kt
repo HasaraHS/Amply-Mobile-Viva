@@ -15,6 +15,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.amply.BuildConfig
 import com.example.amply.R
 import com.example.amply.data.AuthDatabaseHelper
 import com.example.amply.data.ReservationDatabaseHelper
@@ -340,7 +341,7 @@ class CreateReservationActivity : AppCompatActivity() {
         val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         val client = OkHttpClient.Builder().addInterceptor(logging).build()
         return Retrofit.Builder()
-            .baseUrl("https://conor-truculent-rurally.ngrok-free.dev/")
+            .baseUrl(BuildConfig.BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

@@ -14,6 +14,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.amply.BuildConfig
 import com.example.amply.R
 import com.example.amply.data.AuthDatabaseHelper
 import com.example.amply.data.ReservationDatabaseHelper
@@ -191,7 +192,7 @@ class ReservationListActivity : AppCompatActivity() {
         val client = OkHttpClient.Builder().addInterceptor(logging).build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://conor-truculent-rurally.ngrok-free.dev/")
+            .baseUrl(BuildConfig.BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -353,7 +354,7 @@ class ReservationListActivity : AppCompatActivity() {
         val client = OkHttpClient.Builder().addInterceptor(logging).build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://conor-truculent-rurally.ngrok-free.dev/")
+            .baseUrl(BuildConfig.BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

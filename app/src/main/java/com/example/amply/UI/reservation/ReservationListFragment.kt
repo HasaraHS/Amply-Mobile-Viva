@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.amply.BuildConfig
 import com.example.amply.R
 import com.example.amply.data.AuthDatabaseHelper
 import com.example.amply.model.OwnerProfile
@@ -45,7 +46,7 @@ class ReservationListFragment : Fragment() {
 
     companion object {
         private const val ARG_STATUS = "status"
-        private const val BASE_URL = "https://conor-truculent-rurally.ngrok-free.dev/"
+        private const val BASE_URL = BuildConfig.BASE_URL
 
         // Factory method to create a new instance of the fragment with a specific status
         fun newInstance(status: String): ReservationListFragment {
